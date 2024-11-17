@@ -1,6 +1,5 @@
 package com.example.secondssince.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,15 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = white,
+    secondary = dark_grey,
+    tertiary = Pink80,
+    background = black
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = black,
+    secondary = light_grey,
+    tertiary = Pink40,
+    background = white
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -37,7 +38,7 @@ private val LightColorScheme = lightColorScheme(
 fun SecondsSinceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
