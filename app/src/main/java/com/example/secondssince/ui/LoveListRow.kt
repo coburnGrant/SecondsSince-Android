@@ -26,12 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.secondssince.R
-import com.example.secondssince.model.Love
+import com.example.secondssince.ui.viewModel.LoveViewModel
 
 @Composable
 fun LoveListRow(
-    love: Love,
+    loveVM: LoveViewModel,
     onClick: () -> Unit
 ) {
     Column(
@@ -52,7 +51,7 @@ fun LoveListRow(
             ) {
                 // Image filling the button
                 Image(
-                    painter = painterResource(R.drawable.grant_and_dream),
+                    painter = painterResource(loveVM.image),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -89,14 +88,14 @@ fun LoveListRow(
                         )
 
                         Text(
-                            text = "${love.userName} & ${love.loveName}",
+                            text = "${loveVM.userName} & ${loveVM.loveName}",
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
 
                     Text(
-                        text = formatDate(love.anniversary),
+                        text = loveVM.formattedAnniversary,
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.labelMedium
                     )
