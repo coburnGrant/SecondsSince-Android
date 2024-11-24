@@ -1,26 +1,24 @@
 package com.example.secondssince.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.secondssince.model.Love
 import com.example.secondssince.ui.theme.SecondsSinceTheme
+import com.example.secondssince.ui.viewModel.CreateNewLoveUiState
+import com.example.secondssince.ui.viewModel.CreateNewLoveViewModel
 import com.example.secondssince.ui.viewModel.LoveListViewModel
 import com.example.secondssince.ui.viewModel.LoveViewModel
-import java.util.Date
 
 @Composable
-fun SecondsSinceApp() {
-    val love = Love(
-        userName = "Grant",
-        loveName = "Dream",
-        anniversary = Date(1638662400000)
-    )
+fun SecondsSinceApp(
+    createNewLoveViewModel: CreateNewLoveViewModel
+) {
     val navController = rememberNavController()
-    val loveViewModel = LoveViewModel(love)
-    val viewModel = LoveListViewModel(loves = listOf(loveViewModel))
+    val loveListViewModel = LoveListViewModel(loves = listOf(LoveViewModel.testLoveVM()))
 
     NavHost(
         navController = navController,
@@ -31,23 +29,48 @@ fun SecondsSinceApp() {
         ) {
             LoveList(
                 navController = navController,
-                loveListViewModel = viewModel
+                loveListViewModel = loveListViewModel
             )
         }
 
         composable(
             route = SecondsSinceScreen.LoveDetail.name
         ) {
-            LoveDetail(
-                navController = navController,
-                loveVM = loveViewModel,
+            if(loveListViewModel.selectedLove != null) {
+                LoveDetail(
+                    navController = navController,
+                    loveVM = loveListViewModel.selectedLove!!,
+                )
+            } else {
+                navController.popBackStack()
+            }
+        }
+
+        composable(
+            route = SecondsSinceScreen.CreateNewLove.name
+        ) {
+            val uiState by createNewLoveViewModel.createNewLoveUiState.collectAsState()
+
+            NewLoveScreen(
+                viewModel = createNewLoveViewModel,
+                uiState = uiState,
+                onCreate = {
+                    loveListViewModel .addLove(createNewLoveViewModel.getLove())
+                    navController.popBackStack()
+                }
             )
         }
 
         composable(
             route = SecondsSinceScreen.Settings.name
         ) {
+            PreferencesScreen()
+        }
 
+        composable(
+            route = SecondsSinceScreen.Help.name
+        ) {
+            HelpScreen()
         }
     }
 }
@@ -56,6 +79,8 @@ fun SecondsSinceApp() {
 @Composable
 fun SecondsSinceAppPreview() {
     SecondsSinceTheme {
-        SecondsSinceApp()
+        SecondsSinceApp(
+            createNewLoveViewModel = CreateNewLoveViewModel(CreateNewLoveUiState())
+        )
     }
 }

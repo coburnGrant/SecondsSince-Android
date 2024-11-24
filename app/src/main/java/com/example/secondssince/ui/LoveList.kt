@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,13 +20,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.LoveListViewModel
+import com.example.secondssince.ui.viewModel.LoveViewModel
 
 @Composable
 fun LoveList(
@@ -33,6 +40,7 @@ fun LoveList(
     loveListViewModel: LoveListViewModel
 ) {
     val screenHeight: Int = LocalConfiguration.current.screenHeightDp
+    val loves by loveListViewModel.loves.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -61,7 +69,7 @@ fun LoveList(
                     .padding(innerPadding)
             ) {
                 items(
-                    items = loveListViewModel.loves,
+                    items = loves,
                     key = { loveVM ->
                         loveVM.love.id
                     }
@@ -69,7 +77,7 @@ fun LoveList(
                     LoveListRow(
                         loveVM = loveVM,
                         onClick = {
-                            // TODO: set selected love to this love
+                            loveListViewModel.selectedLove = loveVM
                             navController.navigate(SecondsSinceScreen.LoveDetail.name)
                         }
                     )
@@ -86,6 +94,17 @@ fun LoveListAppBar(
 ) {
     TopAppBar(
         title = {},
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.navigate(SecondsSinceScreen.Help.name)
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = "Information",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
         actions = {
             IconButton(onClick = {
                 navController.navigate(SecondsSinceScreen.CreateNewLove.name)
@@ -111,4 +130,17 @@ fun LoveListAppBar(
             containerColor = Color.Transparent
         ),
     )
+}
+
+@Preview
+@Composable
+fun LoveListPreview() {
+    SecondsSinceTheme {
+        LoveList(
+            navController = rememberNavController(),
+            loveListViewModel = LoveListViewModel(
+                loves = listOf(LoveViewModel.testLoveVM())
+            )
+        )
+    }
 }

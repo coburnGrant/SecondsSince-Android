@@ -113,4 +113,10 @@ class LoveViewModel(
         val formatter = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
         return formatter.format(date)
     }
+
+    companion object {
+        fun testLoveVM(): LoveViewModel {
+            return LoveViewModel(love = Love.testLove())
+        }
+    }
 }

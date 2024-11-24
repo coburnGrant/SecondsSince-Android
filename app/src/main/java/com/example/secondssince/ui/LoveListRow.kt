@@ -25,7 +25,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.LoveViewModel
 
 @Composable
@@ -50,12 +53,21 @@ fun LoveListRow(
                     .fillMaxSize()
             ) {
                 // Image filling the button
-                Image(
-                    painter = painterResource(loveVM.image),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if(loveVM.love.loveImageUri == null) {
+                    Image(
+                        painter = painterResource(loveVM.image),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else{
+                    AsyncImage(
+                        model = loveVM.love.loveImageUri!!,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
                 // Gradient overlay
                 Box(
@@ -89,7 +101,7 @@ fun LoveListRow(
 
                         Text(
                             text = "${loveVM.userName} & ${loveVM.loveName}",
-                            color = MaterialTheme.colorScheme.primary,
+                            color = Color.White,
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
@@ -102,5 +114,18 @@ fun LoveListRow(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun LoveListRowPreview() {
+    SecondsSinceTheme {
+        LoveListRow(
+            loveVM = LoveViewModel.testLoveVM(),
+            onClick = {
+                print("clicked")
+            }
+        )
     }
 }

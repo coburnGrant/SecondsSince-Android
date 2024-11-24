@@ -12,7 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,9 +31,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.LoveViewModel
 import com.example.secondssince.ui.viewModel.SecondsSinceUIState
 
@@ -53,16 +59,27 @@ fun LoveDetail(
                 .verticalScroll(rememberScrollState())
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ){
                 // Background image
-                Image(
-                    painter = painterResource(loveVM.image),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(20.dp))
-                )
+                if(loveVM.love.loveImageUri == null) {
+                    Image(
+                        painter = painterResource(loveVM.image),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                    )
+                } else {
+                    AsyncImage(
+                        model = loveVM.love.loveImageUri!!,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                    )
+                }
 
                 // Overlay gradient
                 Box(
@@ -90,7 +107,8 @@ fun LoveDetail(
                     ) {
                         Text(
                             text = loveVM.combinedNames,
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
                         )
 
                         Icon(
@@ -136,7 +154,13 @@ private fun SecondsSinceInfo(
 ) {
     Text(
         text = uiState.totalTimeTogether,
-        style = MaterialTheme.typography.titleLarge,
+        style = TextStyle(
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontWeight = FontWeight.Bold,
+            brush = Brush.linearGradient(
+                colors = listOf(MaterialTheme.colorScheme.primary, Color.Red)
+            )
+        ),
         textAlign = TextAlign.Center
     )
 
@@ -158,7 +182,13 @@ private fun SecondsSinceInfo(
         details.forEach { detail ->
             Text(
                 text = detail,
-                style = MaterialTheme.typography.titleLarge,
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    brush = Brush.linearGradient(
+                        colors = listOf(MaterialTheme.colorScheme.primary, Color.Red)
+                    )
+                ),
                 textAlign = TextAlign.Center
             )
         }
@@ -175,7 +205,7 @@ private fun LoveDetailAppBar(navController: NavController) {
                 onClick = { navController.popBackStack() }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back"
                 )
             }
@@ -184,4 +214,15 @@ private fun LoveDetailAppBar(navController: NavController) {
             containerColor = Color.Transparent
         )
     )
+}
+
+@Preview
+@Composable
+fun LoveDetailPreview() {
+    SecondsSinceTheme {
+        LoveDetail(
+            navController = rememberNavController(),
+            loveVM = LoveViewModel.testLoveVM()
+        )
+    }
 }
