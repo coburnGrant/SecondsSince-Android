@@ -1,26 +1,157 @@
 package com.example.secondssince.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.secondssince.ui.theme.SecondsSinceTheme
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PreferencesScreen(
+    back: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Preferences")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = back
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            TogglePreference(
+                title = "Special Day",
+                description = "Notify me when it is a special day for my loves",
+                isOn = true,
+                onCheckedChanged = {
+                    // TODO
+                }
+            )
+
+
+            val timePickerState = rememberTimePickerState(
+                initialHour = 8,
+                initialMinute = 0,
+                is24Hour = false
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text("Notify on Special Days at")
+
+                TimePicker(
+                    state = timePickerState,
+                    colors = TimePickerDefaults.colors(
+                        clockDialColor = MaterialTheme.colorScheme.secondary,
+                        timeSelectorSelectedContainerColor =  Color.Red.copy(alpha = 0.5F),
+                        timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.secondary,
+                        periodSelectorSelectedContainerColor = Color.Red.copy(alpha = 0.5F)
+                    )
+                )
+            }
+
+            TogglePreference(
+                title = "Special Moment",
+                description = "Notify me when it is a special moment for my loves",
+                isOn = false,
+                onCheckedChanged = {
+                    // TODO
+                }
+            )
+        }
+    }
+}
 
 @Composable
-fun PreferencesScreen() {
-    Scaffold {
+fun TogglePreference(
+    title: String,
+    description: String,
+    isOn: Boolean,
+    onCheckedChanged: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Column(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.weight(1f) // Take remaining space for text column
         ) {
-            Text("Hello World!")
+            Text(title)
+
+            Text(
+                text = description,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
+
+        Switch(
+            checked = isOn,
+            onCheckedChange = onCheckedChanged,
+            modifier = Modifier.padding(5.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White, // Thumb (toggle) when checked
+                checkedTrackColor = Color.Red.copy(alpha = 0.5f), // Track when checked
+                uncheckedThumbColor = Color.White, // Thumb when unchecked
+                uncheckedTrackColor = MaterialTheme.colorScheme.secondary // Track when unchecked
+            )
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreferencesPreview() {
-    PreferencesScreen()
+    SecondsSinceTheme {
+        PreferencesScreen({})
+    }
 }

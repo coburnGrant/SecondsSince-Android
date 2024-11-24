@@ -65,7 +65,9 @@ fun SecondsSinceApp(
         composable(
             route = SecondsSinceScreen.Settings.name
         ) {
-            PreferencesScreen()
+            PreferencesScreen {
+                navController.popBackStack()
+            }
         }
 
         composable(
