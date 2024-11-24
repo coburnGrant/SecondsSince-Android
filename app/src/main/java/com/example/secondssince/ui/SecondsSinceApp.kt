@@ -52,6 +52,7 @@ fun SecondsSinceApp(
             val uiState by createNewLoveViewModel.createNewLoveUiState.collectAsState()
 
             NewLoveScreen(
+                navController = navController,
                 viewModel = createNewLoveViewModel,
                 uiState = uiState,
                 onCreate = {

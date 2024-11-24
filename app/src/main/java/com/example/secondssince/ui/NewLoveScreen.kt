@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CalendarLocale
@@ -19,11 +21,13 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.CreateNewLoveUiState
@@ -42,9 +48,30 @@ import java.util.Date
 fun NewLoveScreen(
     viewModel: CreateNewLoveViewModel,
     uiState: CreateNewLoveUiState,
+    navController: NavController,
     onCreate: () -> Unit
 ) {
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                title = {
+                    Text("Create New Love")
+                }
+            )
+        },
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -119,9 +146,13 @@ fun NewLoveScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Add love image", color = Color.White)
+                    Text(
+                        text = "Add love image",
+                        color = Color.White,
+                    )
+
                     Icon(
-                        imageVector = Icons.Filled.AddCircle,
+                        imageVector = Icons.Default.Person,
                         contentDescription = "Add love image",
                         tint = Color.White
                     )
@@ -144,11 +175,21 @@ fun NewLoveScreen(
                     containerColor = Color.Red
                 )
             ) {
-                Text(
-                    text = "Create new love",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Create new love",
+                        color = Color.White,
+                    )
+
+                    Icon(
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = "Add love image",
+                        tint = Color.White
+                    )
+                }
             }
         }
     }
@@ -159,6 +200,7 @@ fun NewLoveScreen(
 fun NewLoveScreenPreview() {
     SecondsSinceTheme {
         NewLoveScreen(
+            navController = rememberNavController(),
             viewModel = CreateNewLoveViewModel(CreateNewLoveUiState(),),
             uiState = CreateNewLoveUiState(),
             onCreate = {}
