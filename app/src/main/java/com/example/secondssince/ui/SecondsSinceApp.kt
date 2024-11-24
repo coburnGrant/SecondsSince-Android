@@ -1,5 +1,11 @@
 package com.example.secondssince.ui
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +31,16 @@ fun SecondsSinceApp(
         startDestination = SecondsSinceScreen.LoveList.name
     ) {
         composable(
+            route = SecondsSinceScreen.Help.name,
+            enterTransition = { enterTransition(TransitionDirection.LeftToRight) },
+            exitTransition = { exitTransition(TransitionDirection.RightToLeft) }
+        ) {
+            HelpScreen {
+                navController.popBackStack()
+            }
+        }
+
+        composable(
             route = SecondsSinceScreen.LoveList.name
         ) {
             LoveList(
@@ -34,7 +50,9 @@ fun SecondsSinceApp(
         }
 
         composable(
-            route = SecondsSinceScreen.LoveDetail.name
+            route = SecondsSinceScreen.LoveDetail.name,
+            enterTransition =  { enterTransition() },
+            exitTransition = { exitTransition() }
         ) {
             if(loveListViewModel.selectedLove != null) {
                 LoveDetail(
@@ -47,7 +65,9 @@ fun SecondsSinceApp(
         }
 
         composable(
-            route = SecondsSinceScreen.CreateNewLove.name
+            route = SecondsSinceScreen.CreateNewLove.name,
+            enterTransition =  { enterTransition() },
+            exitTransition = { exitTransition() }
         ) {
             val uiState by createNewLoveViewModel.createNewLoveUiState.collectAsState()
 
@@ -56,26 +76,41 @@ fun SecondsSinceApp(
                 viewModel = createNewLoveViewModel,
                 uiState = uiState,
                 onCreate = {
-                    loveListViewModel .addLove(createNewLoveViewModel.getLove())
+                    loveListViewModel.addLove(createNewLoveViewModel.getLove())
                     navController.popBackStack()
                 }
             )
         }
 
         composable(
-            route = SecondsSinceScreen.Settings.name
+            route = SecondsSinceScreen.Settings.name,
+            enterTransition =  { enterTransition() },
+            exitTransition = { exitTransition() }
         ) {
             PreferencesScreen {
                 navController.popBackStack()
             }
         }
-
-        composable(
-            route = SecondsSinceScreen.Help.name
-        ) {
-            HelpScreen()
-        }
     }
+}
+
+enum class TransitionDirection {
+    RightToLeft, LeftToRight
+}
+
+fun enterTransition(direction: TransitionDirection = TransitionDirection.RightToLeft): EnterTransition {
+    return slideInHorizontally(
+        initialOffsetX = {
+           if (direction == TransitionDirection.RightToLeft) it else -it
+        }
+    ) + fadeIn(initialAlpha = 0.3f)
+}
+fun exitTransition(direction: TransitionDirection = TransitionDirection.LeftToRight): ExitTransition {
+    return slideOutHorizontally(
+        targetOffsetX = {
+            if (direction == TransitionDirection.LeftToRight) it else -it
+        }
+    ) + fadeOut()
 }
 
 @Preview(showBackground = true)
