@@ -15,6 +15,8 @@ import com.example.secondssince.model.LoveTypeConverters
 )
 @TypeConverters(LoveTypeConverters::class)
 abstract class AppDatabase: RoomDatabase() {
+    abstract fun loveDao(): LoveDao
+
      companion object {
          @Volatile
          private var INSTANCE: AppDatabase? = null

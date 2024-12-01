@@ -15,6 +15,9 @@ class LoveListViewModel(
     val loves: StateFlow<List<LoveViewModel>> = _loves.asStateFlow()
 
     fun addLove(love: Love) {
+        // TODO: Save to database
+        // TODO: Save image to media store
+
         val viewModel = LoveViewModel(love = love)
 
         _loves.update { currentLoves ->
