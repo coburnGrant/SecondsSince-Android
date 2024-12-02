@@ -14,17 +14,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.secondssince.ui.theme.SecondsSinceTheme
-import com.example.secondssince.ui.viewModel.CreateNewLoveUiState
 import com.example.secondssince.ui.viewModel.CreateNewLoveViewModel
 import com.example.secondssince.ui.viewModel.LoveListViewModel
-import com.example.secondssince.ui.viewModel.LoveViewModel
 
 @Composable
 fun SecondsSinceApp(
-    createNewLoveViewModel: CreateNewLoveViewModel
+    createNewLoveViewModel: CreateNewLoveViewModel,
+    loveListViewModel: LoveListViewModel
 ) {
     val navController = rememberNavController()
-    val loveListViewModel = LoveListViewModel(loves = listOf(LoveViewModel.testLoveVM()))
 
     NavHost(
         navController = navController,
@@ -117,8 +115,8 @@ fun exitTransition(direction: TransitionDirection = TransitionDirection.LeftToRi
 @Composable
 fun SecondsSinceAppPreview() {
     SecondsSinceTheme {
-        SecondsSinceApp(
-            createNewLoveViewModel = CreateNewLoveViewModel(CreateNewLoveUiState())
-        )
+//        SecondsSinceApp(
+//            createNewLoveViewModel = CreateNewLoveViewModel(CreateNewLoveUiState())
+//        )
     }
 }

@@ -1,6 +1,5 @@
 package com.example.secondssince.data
 
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,7 +11,17 @@ import android.provider.MediaStore
 class UserMediaRepository(
     private val context: Context
 ) {
-    fun saveImage(bitmap: Bitmap, fileName: String): Uri? {
+    fun saveImage(uri: Uri): Uri? {
+        val bitmap = this.getBitmapFromUri(uri)
+
+        return if (bitmap != null) {
+            saveImage(bitmap, fileName = uri.lastPathSegment ?: "")
+        } else {
+            null
+        }
+    }
+
+    private fun saveImage(bitmap: Bitmap, fileName: String): Uri? {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
             put(MediaStore.Images.Media.MIME_TYPE, "image/png")
@@ -47,46 +56,22 @@ class UserMediaRepository(
         return null
     }
 
-    fun getImageByFileName(fileName: String): Bitmap? {
-        val resolver: ContentResolver = context.contentResolver
-
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME
-        )
-
-        val selection = "${MediaStore.Images.Media.DISPLAY_NAME} = ?"
-        val selectionArgs = arrayOf(fileName)
-
-        val cursor = resolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            selectionArgs,
-            null
-        )
-
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val id = it.getLong(idColumn)
-                val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon()
-                    .appendPath(id.toString())
-                    .build()
-
-                resolver.openInputStream(contentUri)?.use { inputStream ->
-                    return BitmapFactory.decodeStream(inputStream)
-                }
-            }
-        }
-
-        return null
-    }
-
     fun getImageFromUri(uri: Uri): Bitmap? {
         return try {
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun getBitmapFromUri(uri: Uri): Bitmap? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            BitmapFactory.decodeStream(inputStream).also {
+                inputStream?.close() // Close the input stream to avoid leaks
             }
         } catch (e: Exception) {
             e.printStackTrace()
