@@ -16,11 +16,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.CreateNewLoveViewModel
 import com.example.secondssince.ui.viewModel.LoveListViewModel
+import com.example.secondssince.ui.viewModel.PreferencesViewModel
 
 @Composable
 fun SecondsSinceApp(
     createNewLoveViewModel: CreateNewLoveViewModel,
-    loveListViewModel: LoveListViewModel
+    loveListViewModel: LoveListViewModel,
+    preferencesViewModel: PreferencesViewModel
 ) {
     val navController = rememberNavController()
 
@@ -85,7 +87,9 @@ fun SecondsSinceApp(
             enterTransition =  { enterTransition() },
             exitTransition = { exitTransition() }
         ) {
-            PreferencesScreen {
+            PreferencesScreen(
+                viewModel = preferencesViewModel
+            ) {
                 navController.popBackStack()
             }
         }
@@ -115,8 +119,10 @@ fun exitTransition(direction: TransitionDirection = TransitionDirection.LeftToRi
 @Composable
 fun SecondsSinceAppPreview() {
     SecondsSinceTheme {
-//        SecondsSinceApp(
-//            createNewLoveViewModel = CreateNewLoveViewModel(CreateNewLoveUiState())
-//        )
+        SecondsSinceApp(
+            createNewLoveViewModel = null!!,
+            loveListViewModel = null!!,
+            preferencesViewModel = null!!
+        )
     }
 }

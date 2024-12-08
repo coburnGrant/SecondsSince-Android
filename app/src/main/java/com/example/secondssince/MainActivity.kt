@@ -1,5 +1,6 @@
 package com.example.secondssince
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -7,16 +8,34 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.secondssince.data.AppDatabase
 import com.example.secondssince.data.UserMediaRepository
+import com.example.secondssince.data.UserPreferencesRepository
 import com.example.secondssince.ui.SecondsSinceApp
 import com.example.secondssince.ui.theme.SecondsSinceTheme
 import com.example.secondssince.ui.viewModel.CreateNewLoveViewModel
 import com.example.secondssince.ui.viewModel.LoveListViewModel
+import com.example.secondssince.ui.viewModel.PreferencesViewModel
+
+private const val SECOND_SINCE_PREFERENCES_NAME = "seconds_since_preferences"
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = SECOND_SINCE_PREFERENCES_NAME
+)
 
 class MainActivity : ComponentActivity() {
+    lateinit var userPreferencesRepository: UserPreferencesRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userPreferencesRepository = UserPreferencesRepository(dataStore)
+
+        val preferencesViewModel = PreferencesViewModel(
+            userPreferencesRepository = userPreferencesRepository
+        )
 
         enableEdgeToEdge()
 
@@ -44,7 +63,8 @@ class MainActivity : ComponentActivity() {
             SecondsSinceTheme {
                 SecondsSinceApp(
                     loveListViewModel = loveListViewModel,
-                    createNewLoveViewModel = createNewLoveViewModel
+                    createNewLoveViewModel = createNewLoveViewModel,
+                    preferencesViewModel = preferencesViewModel
                 )
             }
         }

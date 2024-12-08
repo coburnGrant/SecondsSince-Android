@@ -22,16 +22,21 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.secondssince.ui.theme.SecondsSinceTheme
+import com.example.secondssince.ui.viewModel.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesScreen(
+    viewModel: PreferencesViewModel,
     back: () -> Unit
 ) {
     Scaffold(
@@ -65,21 +70,31 @@ fun PreferencesScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
 
+            val notifyOnSpecialDay = viewModel.notifyOnSpecialDay.collectAsState(false)
+
             TogglePreference(
                 title = "Special Day",
                 description = "Notify me when it is a special day for my loves",
-                isOn = true,
+                isOn = notifyOnSpecialDay.value,
                 onCheckedChanged = {
-                    // TODO
+                    viewModel.updateNotifyOnSpecialDay(it)
                 }
             )
 
+            val selectedTime = viewModel.selectedTime.collectAsState()
 
             val timePickerState = rememberTimePickerState(
-                initialHour = 8,
-                initialMinute = 0,
+                initialHour = selectedTime.value.first,
+                initialMinute = selectedTime.value.second,
                 is24Hour = false
             )
+
+            LaunchedEffect(timePickerState) {
+                snapshotFlow { Pair(timePickerState.hour, timePickerState.minute) }
+                    .collect { (hour, minute) ->
+                        viewModel.updateTime(hour, minute)
+                    }
+            }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -97,12 +112,14 @@ fun PreferencesScreen(
                 )
             }
 
+            val notifyOnSpecialMoment = viewModel.notifyOnSpecialMoment.collectAsState(false)
+
             TogglePreference(
                 title = "Special Moment",
                 description = "Notify me when it is a special moment for my loves",
-                isOn = false,
+                isOn = notifyOnSpecialMoment.value,
                 onCheckedChanged = {
-                    // TODO
+                    viewModel.updateNotifyOnSpecialMoment(it)
                 }
             )
         }
@@ -152,6 +169,6 @@ fun TogglePreference(
 @Composable
 fun PreferencesPreview() {
     SecondsSinceTheme {
-        PreferencesScreen({})
+        PreferencesScreen(null!!) {}
     }
 }
