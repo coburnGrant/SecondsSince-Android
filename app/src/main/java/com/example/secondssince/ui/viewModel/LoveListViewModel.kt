@@ -6,12 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.secondssince.data.LoveDao
 import com.example.secondssince.data.UserMediaRepository
 import com.example.secondssince.model.Love
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.collections.plus
+import kotlinx.coroutines.withContext
 
 class LoveListViewModel(
     private val loveDao: LoveDao,
@@ -44,27 +45,38 @@ class LoveListViewModel(
 
     fun addLove(love: Love) {
         viewModelScope.launch {
-            // Save image to user media repo
-            if (love.loveImageUri != null) {
-                val savedUri = userMediaRepository.saveImage(love.loveImageUri!!)
+            val viewModel = LoveViewModel(love = love)
 
-                if (savedUri == null) {
-                    Log.e("LoveListViewModel", "Failed to get URI from user media repository")
-                } else {
-                    love.loveImageUri = savedUri
-                }
+            // Immediately update the UI
+            _loves.update {
+                it + viewModel
             }
 
-            // Save love to db
-            loveDao.insertLove(love)
+            // Cache on background thread
+            withContext(Dispatchers.IO) {
+                if (love.loveImageUri != null) {
+                    val savedUri = userMediaRepository.saveImage(love.loveImageUri!!)
+                    if (savedUri != null) {
+                        love.loveImageUri = savedUri
+                    } else {
+                        Log.e("LoveListViewModel", "Failed to save image")
+                    }
+                }
+
+                // Save the love to the database
+                loveDao.insertLove(love)
+
+                // Update from the new state of the dao
+                updateLovesFromDao()
+            }
+        }
+    }
+
+    fun deleteLove(love: Love) {
+        viewModelScope.launch {
+            loveDao.deleteLove(love)
 
             updateLovesFromDao()
-        }
-
-        val viewModel = LoveViewModel(love = love)
-
-        _loves.update { currentLoves ->
-            currentLoves.plus(viewModel)
         }
     }
 }

@@ -34,11 +34,11 @@ import com.example.secondssince.ui.viewModel.LoveViewModel
 @Composable
 fun LoveListRow(
     loveVM: LoveViewModel,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .padding(20.dp)
+        modifier = modifier
     ) {
         Button(
             onClick = onClick,

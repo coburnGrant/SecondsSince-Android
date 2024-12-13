@@ -76,8 +76,12 @@ fun SecondsSinceApp(
                 viewModel = createNewLoveViewModel,
                 uiState = uiState,
                 onCreate = {
-                    loveListViewModel.addLove(createNewLoveViewModel.getLove())
+                    // Navigate back
                     navController.popBackStack()
+                    // Add new love
+                    loveListViewModel.addLove(createNewLoveViewModel.getLove())
+                    // Reset create new love info
+                    createNewLoveViewModel.reset()
                 }
             )
         }

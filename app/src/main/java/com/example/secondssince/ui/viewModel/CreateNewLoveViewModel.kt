@@ -4,11 +4,13 @@ import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.secondssince.model.Love
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Date
 
 data class CreateNewLoveUiState(
@@ -52,6 +54,14 @@ class CreateNewLoveViewModel(
     fun setGetContent(getContent: ActivityResultLauncher<PickVisualMediaRequest>?) {
         _createNewLoveUiState.update { currentState ->
             currentState.copy(getContent = getContent)
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            _createNewLoveUiState.update {
+                CreateNewLoveUiState()
+            }
         }
     }
 

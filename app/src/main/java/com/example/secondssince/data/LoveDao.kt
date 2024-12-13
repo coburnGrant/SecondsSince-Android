@@ -1,6 +1,7 @@
 package com.example.secondssince.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -25,4 +26,8 @@ interface LoveDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLove(love: Love)
+
+    // Delete a specific Love entity
+    @Delete
+    suspend fun deleteLove(love: Love)
 }
