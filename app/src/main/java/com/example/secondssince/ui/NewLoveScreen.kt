@@ -114,7 +114,12 @@ fun NewLoveScreen(
             DatePicker(
                 state = state,
                 headline = {
-                    Text("Your anniversary", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Your anniversary",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .padding(10.dp)
+                    )
                 },
                 title = null,
                 showModeToggle = false
