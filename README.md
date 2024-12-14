@@ -3,9 +3,9 @@
 ## How to use
 
 1. Build and launch the app
-	- Clone the repository to your local machine.
-	- Open the project in Android Studio.
-	- Build and run the app on a device or simulator.
+    - Clone the repository to your local machine.
+    - Open the project in Android Studio.
+    - Build and run the app on a device or simulator.
 2. Create a new love
     - Tap the '+' icon button on the main screen to create a new love
     - To create a new love, you must have an image imported onto your device/simulator.
